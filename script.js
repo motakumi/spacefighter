@@ -337,6 +337,7 @@ let now = performance.now();
 let nextBossScore = 1000;
 let bossActive = false;
 let enemySpawnLimit = 5;
+let pendingBossHeals = 0;
 let hiScore = 0;
 try { hiScore = parseInt(localStorage.getItem('spaceFighterHi') || '0', 10) || 0; } catch (e) { /* 保存不可の環境 */ }
 function saveHi() { try { localStorage.setItem('spaceFighterHi', String(hiScore)); } catch (e) { /* 無視 */ } }
@@ -702,12 +703,13 @@ class BossBlast {
 }
 
 function killBoss(boss) {
+  if (boss.dead) return;
   const cx = boss.cx, cy = boss.cy;
   score += 100;
   shake = 8;
   boss.dead = true;
   bossActive = false;
-  player.hp = Math.min(player.maxHp, player.hp + 1);
+  pendingBossHeals++;
   enemySpawnLimit = 5;
   while (enemies.filter(enemy => !enemy.dead).length < enemySpawnLimit) spawnEnemy();
   triggerExplosion(cx, cy);
@@ -968,6 +970,7 @@ function resetWorld() {
   shockwaves.length = 0; particles.length = 0;
   nextBossScore = 1000;
   bossActive = false;
+  pendingBossHeals = 0;
   enemySpawnLimit = 5;
   warning = 0; shake = 0; hitFlash = 0;
   fx.length = 0; timers.length = 0;
@@ -1271,14 +1274,15 @@ function step() {
         player.hp--;
         shake = 14;
         hitFlash = 1;
-        if (player.hp <= 0) {
-          state = 'gameover';
-        } else {
-          player.invincible = true;
-          player.invTimer = now;
-        }
+        player.invincible = true;
+        player.invTimer = now;
       }
     }
+    if (pendingBossHeals > 0) {
+      player.hp = Math.min(player.maxHp, player.hp + pendingBossHeals);
+      pendingBossHeals = 0;
+    }
+    if (player.hp <= 0) state = 'gameover';
 
     sweep(enemies); sweep(bosses); sweep(bullets); sweep(enemyBullets); sweep(lasers);
     sweep(bossBeams); sweep(bossProjectiles);
