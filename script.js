@@ -707,6 +707,7 @@ function killBoss(boss) {
   shake = 8;
   boss.dead = true;
   bossActive = false;
+  player.hp = Math.min(player.maxHp, player.hp + 1);
   enemySpawnLimit = 5;
   while (enemies.filter(enemy => !enemy.dead).length < enemySpawnLimit) spawnEnemy();
   triggerExplosion(cx, cy);
