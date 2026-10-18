@@ -1,0 +1,72 @@
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: radial-gradient(ellipse at center, #0a1230 0%, #02030a 70%);
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 600x800 の比率を保ったまま画面に収まるように拡大縮小 */
+#game {
+  display: block;
+  width: min(100vw, 75vh);
+  height: auto;
+  aspect-ratio: 3 / 4;
+  background: #000;
+  touch-action: none;
+  box-shadow: 0 0 40px rgba(0, 200, 255, 0.35), 0 0 120px rgba(80, 60, 255, 0.25);
+}
+
+#mobile-controls {
+  display: none;
+}
+
+@media (pointer: coarse) and (max-width: 768px) {
+  #mobile-controls.is-active {
+    position: fixed;
+    z-index: 1;
+    right: max(8px, env(safe-area-inset-right));
+    bottom: max(8px, env(safe-area-inset-bottom));
+    left: max(8px, env(safe-area-inset-left));
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    pointer-events: none;
+  }
+
+  #mobile-controls button {
+    min-width: 0;
+    min-height: 60px;
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    border: 1px solid rgba(0, 255, 255, 0.75);
+    border-radius: 12px;
+    background: rgba(0, 20, 40, 0.78);
+    color: #fff;
+    font: 700 16px 'Orbitron', sans-serif;
+    text-shadow: 0 0 8px #00ffff;
+    touch-action: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    pointer-events: auto;
+  }
+
+  #mobile-controls button[data-key='KeyA'],
+  #mobile-controls button[data-key='KeyD'] {
+    max-width: 64px;
+    font-size: 24px;
+  }
+
+  #mobile-controls button:active,
+  #mobile-controls button.is-pressed {
+    background: rgba(0, 180, 220, 0.85);
+    box-shadow: 0 0 16px rgba(0, 255, 255, 0.75);
+  }
+}
